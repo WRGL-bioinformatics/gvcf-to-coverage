@@ -35,10 +35,15 @@ for line in f:
             # no actual information yet.
             if CURRENT_GENE["name"] is not None:
                 assert CURRENT_GENE["coverage"] <= CURRENT_GENE["length"], "ERROR: Total coverage appears greater than gene length"
-                print("{}\t{}\t{}\t{:.2f}%".format(CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (CURRENT_GENE["coverage"]/CURRENT_GENE["length"])*100))
+                print("{}\t{}\t{}\t{:.2f}".format(CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (CURRENT_GENE["coverage"]/CURRENT_GENE["length"])*100))
             CURRENT_GENE["name"] = genename
             CURRENT_GENE["length"] = 0
             CURRENT_GENE["coverage"] = 0
         # Update CURRENT_GENE with current amplion details
         CURRENT_GENE["length"] += ampliconlength
         CURRENT_GENE["coverage"] += ampliconcoverage
+
+# print the last gene
+assert CURRENT_GENE["coverage"] <= CURRENT_GENE["length"], "ERROR: Total coverage appears greater than gene length"
+print("{}\t{}\t{}\t{:.2f}".format(CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (CURRENT_GENE["coverage"]/CURRENT_GENE["length"])*100))
+
