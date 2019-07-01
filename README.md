@@ -21,13 +21,13 @@ The scripts are written into the anlaysis scripts, but are simple to call on thi
 as part of a basic pipeline:
 
 per-gene coverage:
-cat <vcf> | \
-./gvcf_to_bed.py <mindp DEFAULT=20> | \
-bedtools map -a <roi bed> -b stdin -o count | \
-./gene_summariser.py 
+cat {vcf} | \
+./gvcf_to_bed.py {mindp DEFAULT=20} | \
+bedtools map -a {roi bed} -b stdin -o count | \
+./gene_summariser.py
 
 samtools depth output:
-cat <vcf> | \
+cat {vcf} | \
 ./gvcf_to_bed.py 0 | \
-bedtools intersect -a stdin -b <roi bed> | \
+bedtools intersect -a stdin -b {roi bed} | \
 cut -f 1,3,5
