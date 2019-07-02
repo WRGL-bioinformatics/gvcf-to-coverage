@@ -24,7 +24,7 @@ vcf=$2
 
 # get the path where the script is located, NOT the pwd of the user panel bed and coverage file are passed via args, so they can be easily changed.
 # tried $BASH_SOURCE without success, so using $0 even though it's not recommendedbed=$1
-script_path="${0%/*}"
+script_path="${0%/*}"/python_scripts
 
 # Check that the files exist
 if [ ! -f "$bed" ]; then
