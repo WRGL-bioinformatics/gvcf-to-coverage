@@ -1,9 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import sys
 
 def summarise_gene(INFILE=sys.stdin):
-    print("INFO: Summarising per-gene coverage...", file=sys.stderr)
+    sys.stderr.write("INFO: Summarising per-gene coverage...\n")
 
     CURRENT_GENE = {"name": None, "length": None, "coverage": None}
 
@@ -29,7 +29,7 @@ def summarise_gene(INFILE=sys.stdin):
                 # no actual information yet.
                 if CURRENT_GENE["name"] is not None:
                     assert CURRENT_GENE["coverage"] <= CURRENT_GENE["length"], "ERROR: Total coverage appears greater than gene length"
-                    print("{}\t{}\t{}\t{:.2f}".format(CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (CURRENT_GENE["coverage"]/CURRENT_GENE["length"])*100))
+                    print "%s\t%d\t%d\t%.2f" %(CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (CURRENT_GENE["coverage"]/CURRENT_GENE["length"])*100)
                 CURRENT_GENE["name"] = genename
                 CURRENT_GENE["length"] = 0
                 CURRENT_GENE["coverage"] = 0
@@ -39,7 +39,18 @@ def summarise_gene(INFILE=sys.stdin):
 
     # print the last gene
     assert CURRENT_GENE["coverage"] <= CURRENT_GENE["length"], "ERROR: Total coverage appears greater than gene length"
-    print("{}\t{}\t{}\t{:.2f}".format(CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (CURRENT_GENE["coverage"]/CURRENT_GENE["length"])*100))
+    print "%s\t%d\t%d\t%.2f" % (CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (CURRENT_GENE["coverage"]/CURRENT_GENE["length"])*100)
+
+    # close file streams
+    try:
+        sys.stdin.close()
+    except:
+        INFILE.close()
+    sys.stderr.close()
+
 
 if __name__ == "__main__":
-    summarise_gene()
+    try:
+        summarise_gene(INFILE=sys.argv[1])
+    except IndexError:
+        summarise_gene()

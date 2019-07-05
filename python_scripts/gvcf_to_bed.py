@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 
 import sys
 
@@ -34,11 +34,11 @@ class ProcessVcf(object):
 
         # Print basic progress info to STDERR
         # Sample metadata recording is handled by gvcf_to_summary.sh
-        print("INFO: Converting gVCF to BED for coverage...", file=sys.stderr)
-        print("INFO: Minimum depth = {}".format(self.MINDP), file=sys.stderr)
+        sys.stderr.write("INFO: Converting gVCF to BED for coverage...\n")
+        sys.stderr.write("INFO: Minimum depth = %d\n" % (self.MINDP))
         # Print an out-of-ROI BED line to ensure bedtools doesn't throw a fit if
         # there is no coverage (map expects at least one line of BED file!)
-        print("1\t0\t1\t{}\t0".format("This is a dummy line. See code for details."), file=sys.stdout)
+        print "1\t0\t1\t%s\t0".format("This is a dummy line. See code for details.")
 
         # Identify and appropriately process file header, column header, and data lines
         for line in self.INFILE:
@@ -56,8 +56,16 @@ class ProcessVcf(object):
 
         # print an output summary
         if self.PASSING_DP == 0:
-            print("WARNING: 0 positions passing minimum depth", file=sys.stderr)
-        print("INFO: {} of {} ({:.2f}%) positions above minimum depth".format(self.PASSING_DP, self.TOTAL_POS, (self.PASSING_DP/self.TOTAL_POS)*100), file=sys.stderr)
+            sys.stderr.write("WARNING: 0 positions passing minimum depth\n")
+        sys.stderr.write("INFO: %d of %d (%.2f) positions above minimum depth\n" % (self.PASSING_DP, self.TOTAL_POS, (self.PASSING_DP/self.TOTAL_POS)*100))
+
+        try:
+            sys.stdin.close()
+        except:
+            self.INFILE.close()
+        sys.stderr.close()
+
+
 
     def process_line(self, line):
         """
@@ -86,7 +94,7 @@ class ProcessVcf(object):
                 self.print_line(line['CHROM'], line['POS'], sampledict['DP'])
         except KeyError:
             # No DP data found. Check if DP=0 is in the INFO field, otherwise fail
-            print("WARNING: No DP field found at position {}:{}. Assuming 0 depth. VCF INFO {}".format(line['CHROM'], line['POS'], line['INFO']), file=sys.stderr)
+            sys.stderr.write("WARNING: No DP field found at position %s:%s. Assuming 0 depth. VCF INFO %s\n" % (line['CHROM'], line['POS'], line['INFO']))
             # Print the BED format output as 0 depth only if MINDP is set to report ALL base positions
             if self.MINDP == 0:
                 self.print_line(line['CHROM'], line['POS'], 0)
@@ -100,10 +108,7 @@ class ProcessVcf(object):
         bed interval.
         """
 
-        print("{}\t{}\t{}\t.\t{}".format(chrom,
-                                         int(pos)-1,
-                                         pos,
-                                         depth), file=sys.stdout)
+        print "%s\t%d\t%s\t.\t%s" % (chrom, int(pos)-1, pos, depth)
 
 if __name__ == "__main__":
     """
@@ -130,4 +135,4 @@ if __name__ == "__main__":
             # depth = default, target file = stdin
             vcfreader = ProcessVcf()
         except:
-            print("ERROR: There was a problem creating the ProcessVcf reader", file=sys.stderr)
+            sys.stderr.write("ERROR: There was a problem creating the ProcessVcf reader\n")

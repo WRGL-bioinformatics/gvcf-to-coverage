@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 module load bedtools/2.21.0
-module load python/3.5.1
 
 # usage prompt for user help
 usage(){
@@ -51,13 +50,13 @@ echo -e "#GENE\tLENGTH\tCOVERED\tCOVERAGE" >> "$out"
 
 # Convert the BP resolution gVCF to a whole-gene summary
 cat "$vcf" | \
-python3 "$script_path"/gvcf_to_bed.py "$mindp" | \
+python "$script_path"/gvcf_to_bed.py "$mindp" | \
 bedtools map -g /scratch/WRGL/REFERENCE_FILES/REFERENCE_GENOME/GRCh37_no_gl000201.genome -a "$bed" -b stdin -c 5 -o count -null 0 | \
-python3 "$script_path"/gene_summariser.py >> "$out"
+python "$script_path"/gene_summariser.py >> "$out"
 
 # Also create a samtools depth style report for pipeline dowload
 # Set minimum depth to 0 to ensure depth is output for all target positions
 cat "$vcf" | \
-python3 "$script_path"/gvcf_to_bed.py 0 | \
+python "$script_path"/gvcf_to_bed.py 0 | \
 bedtools intersect -sorted -g /scratch/WRGL/REFERENCE_FILES/REFERENCE_GENOME/GRCh37_no_gl000201.genome -a stdin -b "$bed" | \
 cut -f 1,3,5 > "$depthout"
