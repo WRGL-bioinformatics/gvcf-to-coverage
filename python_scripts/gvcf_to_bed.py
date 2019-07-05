@@ -57,7 +57,7 @@ class ProcessVcf(object):
         # print an output summary
         if self.PASSING_DP == 0:
             sys.stderr.write("WARNING: 0 positions passing minimum depth\n")
-        sys.stderr.write("INFO: %d of %d (%.2f) positions above minimum depth\n" % (self.PASSING_DP, self.TOTAL_POS, (self.PASSING_DP/self.TOTAL_POS)*100))
+        sys.stderr.write("INFO: %d of %d (%.2f) positions above minimum depth\n" % (self.PASSING_DP, self.TOTAL_POS, (float(self.PASSING_DP)/self.TOTAL_POS)*100))
 
         try:
             sys.stdin.close()

@@ -29,7 +29,7 @@ def summarise_gene(INFILE=sys.stdin):
                 # no actual information yet.
                 if CURRENT_GENE["name"] is not None:
                     assert CURRENT_GENE["coverage"] <= CURRENT_GENE["length"], "ERROR: Total coverage appears greater than gene length"
-                    print "%s\t%d\t%d\t%.2f" %(CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (CURRENT_GENE["coverage"]/CURRENT_GENE["length"])*100)
+                    print "%s\t%d\t%d\t%.2f" %(CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (float(CURRENT_GENE["coverage"])/CURRENT_GENE["length"])*100)
                 CURRENT_GENE["name"] = genename
                 CURRENT_GENE["length"] = 0
                 CURRENT_GENE["coverage"] = 0
