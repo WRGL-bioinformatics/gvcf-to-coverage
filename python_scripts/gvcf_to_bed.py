@@ -86,15 +86,10 @@ class ProcessVcf(object):
                 self.print_line(line['CHROM'], line['POS'], sampledict['DP'])
         except KeyError:
             # No DP data found. Check if DP=0 is in the INFO field, otherwise fail
-            if "DP=0" in line['INFO']:
-                print("WARNING: No DP field found at position {}:{}. Assuming 0 depth".format(line['CHROM'], line['POS']), file=sys.stderr)
-                # Print the BED format output as 0 depth only if MINDP is set to report ALL base positions
-                if self.MINDP == 0:
-                    self.print_line(line['CHROM'], line['POS'], 0)
-            else:
-                print("ERROR: An unexpected error occured at position {}:{}".format(line['CHROM'], line['POS']), file=sys.stderr)
-                # exit 1 *should* break the pipe if in a pipeline
-                sys.exit(1)
+            print("WARNING: No DP field found at position {}:{}. Assuming 0 depth. VCF INFO {}".format(line['CHROM'], line['POS'], line['INFO']), file=sys.stderr)
+            # Print the BED format output as 0 depth only if MINDP is set to report ALL base positions
+            if self.MINDP == 0:
+                self.print_line(line['CHROM'], line['POS'], 0)
 
     @staticmethod
     def print_line(chrom, pos, depth):
