@@ -35,7 +35,7 @@ class ProcessVcf(object):
         # Print basic progress info to STDERR
         # Sample metadata recording is handled by gvcf_to_summary.sh
         sys.stderr.write("INFO: Converting gVCF to BED for coverage...\n")
-        sys.stderr.write("INFO: Minimum depth = %d\n" % (self.MINDP))
+        sys.stderr.write("INFO: Minimum depth = %d\n" % self.MINDP)
         # Print an out-of-ROI BED line to ensure bedtools doesn't throw a fit if
         # there is no coverage (map expects at least one line of BED file!)
         print "1\t0\t1\t%s\t0".format("This is a dummy line. See code for details.")

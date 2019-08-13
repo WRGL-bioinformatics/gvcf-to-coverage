@@ -28,8 +28,8 @@ def summarise_gene(INFILE=sys.stdin):
                 # "name" is initialised to None, so don't print as there's
                 # no actual information yet.
                 if CURRENT_GENE["name"] is not None:
-                    assert CURRENT_GENE["coverage"] <= CURRENT_GENE["length"], "ERROR: Total coverage appears greater than gene length"
-                    print "%s\t%d\t%d\t%.2f" %(CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (float(CURRENT_GENE["coverage"])/CURRENT_GENE["length"])*100)
+                    #assert CURRENT_GENE["coverage"] <= CURRENT_GENE["length"], "ERROR: Total coverage appears greater than gene length"
+                    print "%s\t%d\t%d\t%.2f" % (CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (float(CURRENT_GENE["coverage"])/CURRENT_GENE["length"])*100)
                 CURRENT_GENE["name"] = genename
                 CURRENT_GENE["length"] = 0
                 CURRENT_GENE["coverage"] = 0
@@ -38,7 +38,7 @@ def summarise_gene(INFILE=sys.stdin):
             CURRENT_GENE["coverage"] += ampliconcoverage
 
     # print the last gene
-    assert CURRENT_GENE["coverage"] <= CURRENT_GENE["length"], "ERROR: Total coverage appears greater than gene length"
+#    assert CURRENT_GENE["coverage"] <= CURRENT_GENE["length"], "ERROR: Total coverage appears greater than gene length"
     print "%s\t%d\t%d\t%.2f" % (CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (CURRENT_GENE["coverage"]/CURRENT_GENE["length"])*100)
 
     # close file streams
