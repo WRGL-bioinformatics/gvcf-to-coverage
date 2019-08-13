@@ -21,3 +21,16 @@ Usage is simple:
 
 gvcf_to_coverage.sh <ROI file> <coverage.gvcf>
 
+Updates
+------
+
+2019-08-13: When a gene is interupted in the BED file (i.e. another gene appears within it)
+            it is split in the results. This is because gene_summariser.py prints the gene
+            info when the gene name changes. To resolve this, I need to read the coverage
+            into a dictionary, then print that at the end. Unfortunately this slighlty disrupts
+            the stream-iness of if, but it's necessary to give accurate results.
+
+Issues
+------
+
+None reported

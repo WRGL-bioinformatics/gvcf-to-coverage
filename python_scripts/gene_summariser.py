@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 import sys
+import collections
 
 def summarise_gene(INFILE=sys.stdin):
     sys.stderr.write("INFO: Summarising per-gene coverage...\n")
 
-    CURRENT_GENE = {"name": None, "length": None, "coverage": None}
+    # Use an OrderedDict to keep the genes in chromsomal order
+    genedict = collections.OrderedDict()
 
     for line in INFILE:
         line = line.rstrip()
@@ -22,24 +24,16 @@ def summarise_gene(INFILE=sys.stdin):
             # are separated by an underscore. So we can just split on
             # this and take the first part.
             genename = line[3].split("_")[0]
+            # add each region to the appropriate gene in the dict
+            try:
+                genedict[genename]['covered'] += ampliconcoverage
+                genedict[genename]['length'] += ampliconlength
+            except KeyError:
+                genedict[genename] = {'covered': ampliconcoverage, 'length': ampliconlength}
 
-            # When the gene name changes, print details and reset
-            if genename != CURRENT_GENE["name"]:
-                # "name" is initialised to None, so don't print as there's
-                # no actual information yet.
-                if CURRENT_GENE["name"] is not None:
-                    #assert CURRENT_GENE["coverage"] <= CURRENT_GENE["length"], "ERROR: Total coverage appears greater than gene length"
-                    print "%s\t%d\t%d\t%.2f" % (CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (float(CURRENT_GENE["coverage"])/CURRENT_GENE["length"])*100)
-                CURRENT_GENE["name"] = genename
-                CURRENT_GENE["length"] = 0
-                CURRENT_GENE["coverage"] = 0
-            # Update CURRENT_GENE with current amplion details
-            CURRENT_GENE["length"] += ampliconlength
-            CURRENT_GENE["coverage"] += ampliconcoverage
-
-    # print the last gene
-#    assert CURRENT_GENE["coverage"] <= CURRENT_GENE["length"], "ERROR: Total coverage appears greater than gene length"
-    print "%s\t%d\t%d\t%.2f" % (CURRENT_GENE["name"], CURRENT_GENE["length"], CURRENT_GENE["coverage"], (CURRENT_GENE["coverage"]/CURRENT_GENE["length"])*100)
+    # print the gene summaries, calculating %age coverage
+    for k,v in genedict.items():
+        print("%s\t%d\t%d\t%.2f" % (k, v['length'], v['covered'], (float(v['covered'])/v['length'])*100))
 
     # close file streams
     try:
