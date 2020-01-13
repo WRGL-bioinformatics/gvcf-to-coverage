@@ -1,10 +1,10 @@
-#!/usr/bin/env bash
+#!/bin/bash -e
 
 module load bedtools/2.21.0
 
 # usage prompt for user help
 usage(){
-	echo 'USAGE: gvcf_to_summary.sh <ROI file> <Coverage.txt file>'
+	echo 'USAGE: gvcf_to_summary.sh <ROI file> <gVCF file>'
 }
 
 # Check inputs
