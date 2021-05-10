@@ -38,7 +38,7 @@ class ProcessVcf(object):
         sys.stderr.write("INFO: Minimum depth = %d\n" % self.MINDP)
         # Print an out-of-ROI BED line to ensure bedtools doesn't throw a fit if
         # there is no coverage (map expects at least one line of BED file!)
-        print "1\t0\t1\t%s\t0".format("This is a dummy line. See code for details.")
+        print "1\t0\t1\t%s\t0" %"This is a dummy line. See code for details."
 
         # Identify and appropriately process file header, column header, and data lines
         for line in self.INFILE:

@@ -4,7 +4,7 @@ module load bedtools/2.21.0
 
 # usage prompt for user help
 usage(){
-	echo 'USAGE: gvcf_to_summary.sh <ROI file> <gVCF file>'
+	echo 'USAGE: gvcf_to_summary.sh <ROI file> <genome file> <gVCF file>'
 }
 
 # Check inputs
@@ -18,8 +18,9 @@ fi
 # DEV: maybe spin out into a config file for clarity??
 mindp=20
 
-bed=$1
-vcf=$2
+bed="$1"
+genome="$2"
+vcf="$3"
 
 # get the path where the script is located, NOT the pwd of the user panel bed and coverage file are passed via args, so they can be easily changed.
 # tried $BASH_SOURCE without success, so using $0 even though it's not recommendedbed=$1
@@ -27,12 +28,19 @@ script_path="${0%/*}"/python_scripts
 
 # Check that the files exist
 if [ ! -f "$bed" ]; then
-	echo 'ERROR: ROI file '"$bed"' does not exist or could not be opened'
+	>&2 echo 'ERROR: ROI file '"$bed"' does not exist or could not be opened'
 	usage
 	exit 1
 fi
+
+if [ ! -f "$genome" ]; then
+    >&2 echo 'ERROR: Genome file '"$genome"' does not exist of could not be opened'
+    usage
+    exit 1
+fi
+
 if [ ! -f "$vcf" ]; then
-	echo 'ERROR: Coverage file '"$vcf"' does not exist or could not be opened'
+	>&2 echo 'ERROR: Coverage file '"$vcf"' does not exist or could not be opened'
 	usage
 	exit 1
 fi
@@ -53,12 +61,12 @@ echo -e "#GENE\tLENGTH\tCOVERED\tCOVERAGE" >> "$out"
 if (file "$vcf" | grep -q compressed ) ; then
     zcat "$vcf" | \
     python2 "$script_path"/gvcf_to_bed.py "$mindp" | \
-    bedtools map -g /scratch/WRGL/REFERENCE_FILES/REFERENCE_GENOME/GRCh37_no_gl000201.genome -a "$bed" -b stdin -c 5 -o count -null 0 | \
+    bedtools map -g "$genome" -a "$bed" -b stdin -c 5 -o count -null 0 | \
     python2 "$script_path"/gene_summariser.py >> "$out"
 else
     cat "$vcf" | \
     python2 "$script_path"/gvcf_to_bed.py "$mindp" | \
-    bedtools map -g /scratch/WRGL/REFERENCE_FILES/REFERENCE_GENOME/GRCh37_no_gl000201.genome -a "$bed" -b stdin -c 5 -o count -null 0 | \
+    bedtools map -g "$genome" -a "$bed" -b stdin -c 5 -o count -null 0 | \
     python2 "$script_path"/gene_summariser.py >> "$out"
 fi
 
@@ -67,11 +75,11 @@ fi
 if (file "$vcf" | grep -q compressed ) ; then
     zcat "$vcf" | \
     python2 "$script_path"/gvcf_to_bed.py 0 | \
-    bedtools intersect -u -sorted -g /scratch/WRGL/REFERENCE_FILES/REFERENCE_GENOME/GRCh37_no_gl000201.genome -a stdin -b "$bed" | \
+    bedtools intersect -u -sorted -g "$genome" -a stdin -b "$bed" | \
     cut -f 1,3,5 > "$depthout"
 else
     cat "$vcf" | \
     python2 "$script_path"/gvcf_to_bed.py 0 | \
-    bedtools intersect -u -sorted -g /scratch/WRGL/REFERENCE_FILES/REFERENCE_GENOME/GRCh37_no_gl000201.genome -a stdin -b "$bed" | \
+    bedtools intersect -u -sorted -g "$genome" -a stdin -b "$bed" | \
     cut -f 1,3,5 > "$depthout"
 fi
