@@ -1,6 +1,9 @@
 #!/bin/bash -e
 
-module load bedtools/2.21.0
+# Iridis5 has no bedtools module (yet - we could request it)
+# So instead just use an alias to the manually installed version.
+#module load bedtools/2.21.0
+alias bedtools="/scratch/bs5n14/software/bedtools/2.30.0/bedtools"
 
 # usage prompt for user help
 usage(){
