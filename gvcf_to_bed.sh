@@ -1,7 +1,14 @@
 # Run the GVCF to BED Python script only
 
 # get the path where the script is located.
-script_path="$( dirname "$(readlink -f "$0")" )"/python_scripts
+scriptpath="$( dirname "$(readlink -f "$0")" )"/python_scripts
+
+# Iridis5 has no bedtools module (yet - we could request it)
+# So instead just use an alias to the manually installed version.
+#module load bedtools/2.21.0
+# DEV: This setting is needed to allow alias in scripts
+shopt -s expand_aliases
+alias bedtools="/scratch/bs5n14/software/bedtools/2.30.0/bedtools"
 
 usage(){
     >&2 echo "USAGE:"
@@ -10,7 +17,6 @@ usage(){
 }
 
 gvcf="$1"
-bed="$2"
 mindp="${2:-20}"
 
 if [ ! -f "$gvcf" ]; then
@@ -18,10 +24,4 @@ if [ ! -f "$gvcf" ]; then
     usage
 fi
 
-if [ ! -f "$bed" ]; then
-    >&2 echo "ERROR: Cannot open BED file $bed"
-    usage
-fi
-
-"$scriptpath"/gvcf_to_bed.py
-
+"$scriptpath"/gvcf_to_bed.py "$gvcf" "$mindp" | bedtools merge

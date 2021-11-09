@@ -1,11 +1,12 @@
 #!/usr/bin/env python2
 
+import gzip
 import sys
 
 class ProcessVcf(object):
     """
     Generates BED-format output from an input gVCF file.
-    For more accurate coverage (related to depth used for calling) compared to 
+    For more accurate coverage (related to depth used for calling) compared to
     current smtools depth based methods.
     """
 
@@ -110,19 +111,33 @@ class ProcessVcf(object):
 
         print "%s\t%d\t%s\t.\t%s" % (chrom, int(pos)-1, pos, depth)
 
+
 if __name__ == "__main__":
     """
     Handle the various possible combinations of inputs, either directly passing a file name
     or using stdin as part of a pipeline. Allow file and depth to be specified in either
     order. Also have to allow depth to be specified in a pipe.
     """
+
+    def openfile(fname):
+        """
+        Try to open the given file, to handle both regular
+        and gzipped files
+        """
+        try:
+            fhandle = gzip.open(fname, mode="r")
+            fhandle.read(1)
+            return fhandle
+        except IOError:
+            return open(fname, mode="r")
+
     if len(sys.argv) == 3:
         try:
             # min depth and target file user specified
-            vcfreader = ProcessVcf(mindp=int(sys.argv[1]), infile=open(sys.argv[2]))
+            vcfreader = ProcessVcf(mindp=int(sys.argv[1]), infile=openfile(sys.argv[2]))
         except ValueError:
             # min depth and target file specified but reversed
-            vcfreader = ProcessVcf(infile=open(sys.argv[1]), mindp=int(sys.argv[2]))
+            vcfreader = ProcessVcf(infile=openfile(sys.argv[1]), mindp=int(sys.argv[2]))
     elif len(sys.argv) == 2:
         try:
             # depth specified, target file = stdin
