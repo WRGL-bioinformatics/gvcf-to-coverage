@@ -3,7 +3,15 @@
 # Iridis5 has no bedtools module (yet - we could request it)
 # So instead just use an alias to the manually installed version.
 #module load bedtools/2.21.0
+# DEV: This setting is needed to allow alias in scripts
+shopt -s expand_aliases
 alias bedtools="/scratch/bs5n14/software/bedtools/2.30.0/bedtools"
+
+# TODO: Will need to add a Python 3 module load here once updated. Currently works
+#       as the default version is 2.7, but no default Python 3 install is available.
+#       Currently the scripts are explicitly calling python2, both at the command
+#       and the shebang within the scripts (could remove python command if set up
+#       correctly, and just treat them like a standard script or executable).
 
 # usage prompt for user help
 usage(){
@@ -25,9 +33,8 @@ bed="$1"
 genome="$2"
 vcf="$3"
 
-# get the path where the script is located, NOT the pwd of the user panel bed and coverage file are passed via args, so they can be easily changed.
-# tried $BASH_SOURCE without success, so using $0 even though it's not recommendedbed=$1
-script_path="${0%/*}"/python_scripts
+# get the path where the script is located.
+script_path="$( dirname "$(readlink -f "$0")" )"/python_scripts
 
 # Check that the files exist
 if [ ! -f "$bed" ]; then
