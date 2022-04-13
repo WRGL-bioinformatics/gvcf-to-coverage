@@ -24,6 +24,10 @@ gvcf_to_coverage.sh <ROI file> <coverage.gvcf>
 Updates
 ------
 
+2021-10-27: Transferred to Iridis5. No Bedtools module availble, so replaced with an alias
+            to a locally installed version as a simple slot-in replacement. Module load
+            command has been commented out to prevent errors.
+
 2019-08-13: When a gene is interupted in the BED file (i.e. another gene appears within it)
             it is split in the results. This is because gene_summariser.py prints the gene
             info when the gene name changes. To resolve this, I need to read the coverage
@@ -34,3 +38,8 @@ Issues
 ------
 
 None reported
+
+TODO
+----
+
+Update Python scripts to Python3.

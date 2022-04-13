@@ -1,6 +1,17 @@
-#!/bin/bash -e
+#!/bin/bash
 
-module load bedtools/2.21.0
+# check if bedtools module is already loaded (e.g. from pipeline)
+bedtools --version > /dev/null 2> /dev/null
+if [[  $? -ne 0 ]]; then
+    # Non-zero exit means bedtools isn't loaded
+    module load bedtools
+fi
+
+# TODO: Will need to add a Python 3 module load here once updated. Currently works
+#       as the default version is 2.7, but no default Python 3 install is available.
+#       Currently the scripts are explicitly calling python2, both at the command
+#       and the shebang within the scripts (could remove python command if set up
+#       correctly, and just treat them like a standard script or executable).
 
 # usage prompt for user help
 usage(){
@@ -22,9 +33,8 @@ bed="$1"
 genome="$2"
 vcf="$3"
 
-# get the path where the script is located, NOT the pwd of the user panel bed and coverage file are passed via args, so they can be easily changed.
-# tried $BASH_SOURCE without success, so using $0 even though it's not recommendedbed=$1
-script_path="${0%/*}"/python_scripts
+# get the path where the script is located.
+script_path="$( dirname "$(readlink -f "$0")" )"/python_scripts
 
 # Check that the files exist
 if [ ! -f "$bed" ]; then
